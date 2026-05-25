@@ -65,85 +65,6 @@ body{
   background-size:256px;
 }
 
-/* ============================================================
-   COUNTDOWN SCREEN
-============================================================ */
-#countdown{
-  position:fixed;inset:0;z-index:500;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:var(--ink);
-  transition:opacity 2s ease,transform 2s cubic-bezier(0.76,0,0.24,1);
-}
-#countdown.out{opacity:0;transform:scale(1.08);pointer-events:none}
-
-.cd-crown{
-  font-size:clamp(2rem,5vw,3.5rem);margin-bottom:2rem;
-  animation:crown-float 4s ease-in-out infinite;
-  filter:drop-shadow(0 0 20px rgba(232,192,96,0.6));
-}
-@keyframes crown-float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
-
-.cd-line1{
-  font-family:'Italiana',serif;
-  font-size:clamp(1rem,3vw,1.6rem);
-  color:var(--amber2);letter-spacing:0.25em;text-transform:uppercase;
-  opacity:0;animation:rise 1.5s ease 0.5s forwards;
-  text-shadow:0 0 40px rgba(232,192,96,0.4);
-}
-.cd-line2{
-  font-family:'IM Fell English',serif;font-style:italic;
-  font-size:clamp(1.4rem,4vw,2.4rem);
-  color:var(--parch);margin:1rem 0 0;
-  opacity:0;animation:rise 1.5s ease 1.2s forwards;
-  text-shadow:0 0 60px rgba(255,245,235,0.2);
-}
-@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-
-/* Timer */
-.cd-timer{
-  display:flex;align-items:flex-start;gap:clamp(0.8rem,3vw,2.5rem);
-  margin:3rem 0 2.5rem;
-  opacity:0;animation:rise 1.5s ease 2s forwards;
-}
-.cd-unit{display:flex;flex-direction:column;align-items:center;gap:0.5rem}
-.cd-num{
-  font-family:'Cinzel',serif;
-  font-size:clamp(3rem,10vw,7rem);
-  font-weight:600;
-  color:var(--amber2);
-  line-height:0.85;
-  text-shadow:0 0 60px rgba(232,192,96,0.5),0 0 120px rgba(232,192,96,0.2);
-  position:relative;
-  transition:all 0.3s;
-}
-.cd-num.flip{
-  animation:numflip 0.35s cubic-bezier(0.4,0,0.2,1);
-}
-@keyframes numflip{
-  0%{transform:translateY(0);opacity:1}
-  40%{transform:translateY(-8px);opacity:0.3}
-  100%{transform:translateY(0);opacity:1}
-}
-.cd-sep{
-  font-family:'Cinzel',serif;
-  font-size:clamp(2rem,6vw,4rem);
-  color:var(--amber);
-  line-height:0.85;
-  animation:sep-blink 1s ease-in-out infinite;
-  margin-top:0.1rem;
-}
-@keyframes sep-blink{0%,100%{opacity:1}50%{opacity:0.2}}
-.cd-lbl{
-  font-family:'Italiana',serif;font-size:clamp(0.55rem,1.2vw,0.75rem);
-  letter-spacing:0.35em;text-transform:uppercase;color:var(--amber);opacity:0.7;
-}
-
-.cd-foot{
-  font-family:'IM Fell English',serif;font-style:italic;
-  font-size:clamp(0.85rem,2vw,1.1rem);
-  color:rgba(255,245,235,0.35);letter-spacing:0.08em;
-  opacity:0;animation:rise 1.5s ease 2.8s forwards;
-}
 
 /* ============================================================
    UNLOCK CANVAS (fireworks)
@@ -157,9 +78,8 @@ body{
 ============================================================ */
 #exp{
   position:relative;z-index:2;
-  opacity:0;transition:opacity 2.5s ease;pointer-events:none;
+  opacity:1;pointer-events:all;
 }
-#exp.on{opacity:1;pointer-events:all}
 
 /* ============================================================
    SECTION: CINEMATIC INTRO
@@ -635,7 +555,7 @@ input[type=range].mvol::-webkit-slider-thumb{
   border:1px solid rgba(184,134,42,0.25);
   border-radius:50px;
   padding:0.65rem 1.2rem;
-  display:none;align-items:center;gap:0.8rem;
+  display:flex;align-items:center;gap:0.8rem;
   backdrop-filter:blur(20px);
   box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(184,134,42,0.05);
   transition:all 0.3s;
@@ -678,24 +598,6 @@ input[type=range].mvol::-webkit-slider-thumb{
 <canvas id="bg-canvas"></canvas>
 <canvas id="fw-canvas"></canvas>
 
-<!-- ============================================================
-     COUNTDOWN
-============================================================ -->
-<div id="countdown">
-  <div class="cd-crown">♛</div>
-  <div class="cd-line1">Something beautiful is waiting for you</div>
-  <div class="cd-line2">"Your moment arrives at midnight."</div>
-  <div class="cd-timer">
-    <div class="cd-unit"><div class="cd-num" id="cd-d">00</div><div class="cd-lbl">Days</div></div>
-    <div class="cd-sep">:</div>
-    <div class="cd-unit"><div class="cd-num" id="cd-h">00</div><div class="cd-lbl">Hours</div></div>
-    <div class="cd-sep">:</div>
-    <div class="cd-unit"><div class="cd-num" id="cd-m">00</div><div class="cd-lbl">Minutes</div></div>
-    <div class="cd-sep">:</div>
-    <div class="cd-unit"><div class="cd-num" id="cd-s">00</div><div class="cd-lbl">Seconds</div></div>
-  </div>
-  <div class="cd-foot">May 25, 2026 · 00 : 00 AM</div>
-</div>
 
 <!-- ============================================================
      MAIN EXPERIENCE
@@ -916,61 +818,41 @@ function drawBG(){
 drawBG();
 
 // ============================================================
-// COUNTDOWN
+// AUDIO
 // ============================================================
-const TARGET=new Date('2026-05-25T00:00:00').getTime();
-let unlocked=false;
+const audio=document.getElementById('audio');
+let playing=false;
+audio.volume=0.7;
 
-function pad(n){return String(n).padStart(2,'0')}
-function tick(){
-  const now=Date.now();
-  const diff=TARGET-now;
-  if(diff<=0){if(!unlocked)doUnlock();return;}
-  const d=Math.floor(diff/86400000);
-  const h=Math.floor((diff%86400000)/3600000);
-  const m=Math.floor((diff%3600000)/60000);
-  const s=Math.floor((diff%60000)/1000);
-  function set(id,val){
-    const el=document.getElementById(id);
-    if(el.textContent!==pad(val)){
-      el.textContent=pad(val);
-      el.classList.remove('flip');void el.offsetWidth;el.classList.add('flip');
-    }
-  }
-  set('cd-d',d);set('cd-h',h);set('cd-m',m);set('cd-s',s);
+function tryPlay(){
+  audio.play().then(()=>{playing=true;updatePlayerUI();}).catch(()=>{});
 }
-tick();
-const cdInt=setInterval(tick,1000);
-
-// For testing — remove in production
-window.testUnlock=doUnlock;
-
-// ============================================================
-// UNLOCK
-// ============================================================
-function doUnlock(){
-  if(unlocked)return;unlocked=true;
-  clearInterval(cdInt);
-  launchFireworks();
-  launchConfetti();
-  setTimeout(()=>{
-    document.getElementById('countdown').classList.add('out');
-    setTimeout(()=>{
-      document.getElementById('countdown').style.display='none';
-      const exp=document.getElementById('exp');
-      exp.style.opacity='0';
-      exp.style.pointerEvents='all';
-      setTimeout(()=>{exp.style.opacity='1';},50);
-      document.getElementById('fixed-player').style.display='flex';
-      initScrollReveal();
-      makeSparks();
-      tryPlay();
-    },2000);
-  },2500);
+function toggleAudio(){
+  if(playing){audio.pause();playing=false;updatePlayerUI();}
+  else{audio.play().then(()=>{playing=true;updatePlayerUI();}).catch(()=>{});}
 }
+function setVol(v){audio.volume=v;document.querySelectorAll('.mvol,.fp-vol').forEach(i=>i.value=v);}
+function updatePlayerUI(){
+  document.querySelectorAll('#mainPlayBtn,.fpbtn').forEach(b=>b.textContent=playing?'⏸':'▶');
+  const bars=[...document.querySelectorAll('.wb,.fpw')];
+  bars.forEach(b=>b.style.animationPlayState=playing?'running':'paused');
+}
+// Pause bars initially
+document.querySelectorAll('.wb,.fpw').forEach(b=>b.style.animationPlayState='paused');
 
-// Auto-unlock if past midnight
-doUnlock();
+// ============================================================
+// INIT
+// ============================================================
+initScrollReveal();
+makeSparks();
+// Try autoplay immediately; if blocked by browser policy, play on first user interaction
+tryPlay();
+['click','touchstart','keydown'].forEach(evt=>{
+  document.addEventListener(evt,function startOnInteraction(){
+    if(!playing)tryPlay();
+    ['click','touchstart','keydown'].forEach(e=>document.removeEventListener(e,startOnInteraction));
+  },{once:true,passive:true});
+});
 
 // ============================================================
 // FIREWORKS
@@ -1119,33 +1001,8 @@ function spawnHeart(x,y){
   setTimeout(()=>h.remove(),2000);
 }
 
-// Click hearts (after unlock)
-document.addEventListener('click',e=>{if(unlocked)spawnHeart(e.clientX,e.clientY)});
-
-// ============================================================
-// AUDIO
-// ============================================================
-const audio=document.getElementById('audio');
-let playing=false;
-audio.volume=0.7;
-
-function tryPlay(){
-  audio.play().then(()=>{playing=true;updatePlayerUI();}).catch(()=>{});
-}
-function toggleAudio(){
-  if(playing){audio.pause();playing=false;}
-  else{audio.play().then(()=>{playing=true;});
-}
-  updatePlayerUI();
-}
-function setVol(v){audio.volume=v;document.querySelectorAll('.mvol,.fp-vol').forEach(i=>i.value=v);}
-function updatePlayerUI(){
-  document.querySelectorAll('#mainPlayBtn,.fpbtn').forEach(b=>b.textContent=playing?'⏸':'▶');
-  const bars=[...document.querySelectorAll('.wb,.fpw')];
-  bars.forEach(b=>b.style.animationPlayState=playing?'running':'paused');
-}
-// Pause bars initially
-document.querySelectorAll('.wb,.fpw').forEach(b=>b.style.animationPlayState='paused');
+// Click hearts
+document.addEventListener('click',e=>{spawnHeart(e.clientX,e.clientY)});
 
 // ============================================================
 // TRIPTYCH entrance animation
